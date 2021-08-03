@@ -8,7 +8,7 @@ import { ExiumGrapherModel } from "../src/types/ExiumGrapherModel.ts";
 Deno.test('exium-grapher - graph resolution', async () => {
   try {
     const url = new URL('./fixtures/graph_test/Hello.deeper', import.meta.url);
-    const graph = compute({
+    const graph = await compute({
       url,
     });
     await graph.resolve();

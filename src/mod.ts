@@ -1,18 +1,21 @@
 import { ExiumGrapherModel } from "./types/ExiumGrapherModel.ts";
 import { ExiumGrapherOptions } from "./types/ExiumGrapherOptions.ts";
 
-export function compute(opts: ExiumGrapherOptions): ExiumGrapherModel {
+export async function compute(opts: ExiumGrapherOptions): Promise<ExiumGrapherModel> {
+  const reader = async (fileURL: URL, isRemote: boolean) => {
+    if (['http:', 'https:'].includes(fileURL.protocol)) {
+      return await (await (await fetch(fileURL)).blob()).text();
+    } else {
+      return Deno.readTextFileSync(fileURL)
+    }
+  };
   const model = new ExiumGrapherModel({
     url: opts.url,
-    reader: async (fileURL: URL, isRemote: boolean) => {
-      if (isRemote) {
-        return await (await (await fetch(fileURL)).blob()).text();
-      } else {
-        return Deno.readTextFileSync(fileURL)
-      }
-    },
+    reader,
     cwd: opts.cwd || Deno.cwd(),
-    source: Deno.readTextFileSync(opts.url),
+    source: await reader(opts.url,
+      opts.url.pathname.startsWith('http://')
+      || opts.url.pathname.startsWith('https://')),
   });
   return model;
 }

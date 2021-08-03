@@ -9,7 +9,7 @@ Deno.test('exium-grapher - absolute path resolution', async () => {
   try {
     const url = new URL('./fixtures/absolute_test/A.deeper', import.meta.url);
     const cwd = new URL('./fixtures/absolute_test/', import.meta.url);
-    const graph = compute({
+    const graph = await compute({
       url,
       cwd: cwd.pathname,
     });
