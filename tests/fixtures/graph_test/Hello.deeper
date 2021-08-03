@@ -1,0 +1,7 @@
+import component { Child } from './Child.deeper';
+
+export app <Application>
+  <template>
+    <Child />
+  </template>
+</Application>

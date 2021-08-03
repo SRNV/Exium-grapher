@@ -1,4 +1,5 @@
 export {
   ExiumContext,
-  ExiumDocument
-} from 'https://deno.land/x/exium';
+  ExiumDocument,
+  ContextTypes
+} from 'https://deno.land/x/exium@0.14.1/mod.ts';

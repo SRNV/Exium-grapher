@@ -1,0 +1,3 @@
+export component <SubChild>
+  <template></template>
+</SubChild>
