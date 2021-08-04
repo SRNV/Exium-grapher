@@ -3,6 +3,7 @@ import {
   ExiumDocument,
   ContextTypes,
 } from '../../deps/exium.ts';
+import { join } from '../../deps/path.ts';
 
 export interface ExiumGrapherModelInterface {
   url: URL;
@@ -10,10 +11,11 @@ export interface ExiumGrapherModelInterface {
   fileDependencies: ExiumGrapherModel[];
 }
 export interface ExiumGrapherModelOptions {
-  reader: (url: URL, isRemote: boolean) => Promise<string>,
+  reader: (url: URL) => Promise<string>,
   url: URL,
   source: string,
   cwd: ReturnType<typeof Deno['cwd']>;
+  parent?: ExiumGrapherModel;
 }
 export class ExiumGrapherModel implements ExiumGrapherModelInterface {
   /**
@@ -40,6 +42,12 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
   get cwd() {
     return this.opts.cwd;
   }
+  get parent() {
+    return this.opts.parent;
+  }
+  get isRemote(): boolean {
+    return ['http:', 'https:'].includes(this.url.protocol) || !!(this.parent?.isRemote);
+  }
   /**
    * require a dependency and start saving this dependency
    * @param importCTX ExiumContext: ImportStatement
@@ -50,12 +58,12 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
     const path = importCTX.getImportPath();
     if (path) {
       const newurl = this.getURL(path);
-      const isRemote = path.startsWith('https://') || path.startsWith('http://');
-      const source = await this.reader(newurl, isRemote);
+      const source = await this.reader(newurl);
       const dependency = new ExiumGrapherModel({
         url: newurl,
         cwd: this.opts.cwd,
         reader: this.opts.reader,
+        parent: this,
         source,
       });
       this.fileDependencies.push(dependency);
@@ -65,11 +73,14 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
     }
   }
   getURL(path: string): URL {
+    const { isRemote } = this;
     const isRelative = path.startsWith('.');
     const isScoped = path.startsWith('@/');
-    let finalPath = isScoped ? path.replace(/^\@\//i, `file:///${
-      this.opts.cwd.replace(/\/+$/, '')
-    }/`) : path;
+    const reg = /^\@\//i;
+    let finalPath = isScoped ?
+      path.replace(reg, `file:///${this.opts.cwd.replace(/\/+$/, '')}/`) :
+      isRemote && isRelative ?
+        join(this.url.origin, path) : path;
     return isRelative ?
       new URL(finalPath, this.opts.url)
       : new URL(finalPath);
