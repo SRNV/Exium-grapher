@@ -3,7 +3,8 @@ import {
   assert,
   assertStrictEquals
 } from "https://deno.land/std@0.95.0/testing/asserts.ts";
-import { ExiumGrapherModel } from "../src/types/ExiumGrapherModel.ts";
+import { ExiumGrapherModel } from "../src/ExiumGrapherModel.ts";
+import reader from "../src/reader.ts";
 
 Deno.test('exium-grapher - absolute path resolution', async () => {
   try {
@@ -11,6 +12,7 @@ Deno.test('exium-grapher - absolute path resolution', async () => {
     const cwd = new URL('./fixtures/absolute_test/', import.meta.url);
     const graph = await compute({
       url,
+      reader,
       cwd: cwd.pathname,
     });
     await graph.resolve();

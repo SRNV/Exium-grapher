@@ -3,13 +3,15 @@ import {
   assert,
   assertStrictEquals
 } from "https://deno.land/std@0.95.0/testing/asserts.ts";
-import { ExiumGrapherModel } from "../src/types/ExiumGrapherModel.ts";
+import { ExiumGrapherModel } from "../src/ExiumGrapherModel.ts";
+import reader from '../src/reader.ts';
 
 Deno.test('exium-grapher - graph resolution', async () => {
   try {
     const url = new URL('./fixtures/graph_test/Hello.deeper', import.meta.url);
     const graph = await compute({
       url,
+      reader,
     });
     await graph.resolve();
     const map = graph.getMapDocument();

@@ -1,1 +1,2 @@
+import component { C } from './C.deeper';
 export component <B></B>

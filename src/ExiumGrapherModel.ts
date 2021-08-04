@@ -2,8 +2,8 @@ import {
   ExiumContext,
   ExiumDocument,
   ContextTypes,
-} from '../../deps/exium.ts';
-import { join } from '../../deps/path.ts';
+} from '../deps/exium.ts';
+import { join } from '../deps/path.ts';
 
 export interface ExiumGrapherModelInterface {
   url: URL;
@@ -22,16 +22,17 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
    * save all files, retrieve them with the path
    */
   static mapFiles: Map<string, ExiumGrapherModel> = new Map();
+  baseURL: null | string = null;
   fileDependencies: ExiumGrapherModelInterface['fileDependencies'] = [];
   document: ExiumDocument;
   constructor(private opts: ExiumGrapherModelOptions) {
     this.document = new ExiumDocument({
       url: opts.url,
-      onError() {},
+      onError() { },
       source: opts.source,
       options: { type: 'deeper' },
     });
-    ExiumGrapherModel.mapFiles.set(opts.url.pathname, this);
+    ExiumGrapherModel.mapFiles.set(opts.url.href, this);
   }
   get url() {
     return this.opts.url;
@@ -72,13 +73,26 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
       throw invalid;
     }
   }
+  setBaseURL() {
+    const urlsearch = new URLSearchParams(this.url.search);
+    // save and remove the @ key
+    this.baseURL = urlsearch.get('@');
+    urlsearch.delete('@');
+    this.url.search = urlsearch.toString();
+  }
   getURL(path: string): URL {
+    // first set the baseURL if there's any search param
+    this.setBaseURL();
+    // start to compute the url
     const { isRemote } = this;
     const isRelative = path.startsWith('.');
     const isScoped = path.startsWith('@/');
     const reg = /^\@\//i;
+    console.warn(this.baseURL);
     let finalPath = isScoped ?
-      path.replace(reg, `file:///${this.opts.cwd.replace(/\/+$/, '')}/`) :
+      isRemote && this.baseURL ?
+        join(this.url.origin, this.baseURL, path.replace(reg, './')) :
+        path.replace(reg, `file:///${this.opts.cwd.replace(/\/+$/, '')}/`) :
       isRemote && isRelative ?
         join(this.url.origin, path) : path;
     return isRelative ?
@@ -89,7 +103,7 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
     const { document } = this;
     const { contexts } = document;
     const imports = contexts.filter((context: ExiumContext) => context.type === ContextTypes.ImportStatement && context.data.isComponent)
-    for await(let importCTX of imports) {
+    for await (let importCTX of imports) {
       const dep = await this.require(importCTX);
       if (dep) await dep.resolve();
     }

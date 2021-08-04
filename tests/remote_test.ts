@@ -1,26 +1,31 @@
 import { compute } from '../src/mod.ts';
 import {
   assert,
+  assertEquals,
 } from "https://deno.land/std@0.95.0/testing/asserts.ts";
-import { ExiumGrapherModel } from "../src/types/ExiumGrapherModel.ts";
+import { ExiumGrapherModel } from "../src/ExiumGrapherModel.ts";
+import reader from '../src/reader.ts';
 
 Deno.test('exium-grapher - resolve remote components', async () => {
   try {
-    const url = new URL('https://raw.githubusercontent.com/SRNV/Exium-grapher/main/tests/fixtures/remote_test/A.deeper');
+    const url = new URL('./fixtures/remote_test/A.deeper', import.meta.url);
     const graph = await compute({
       url,
+      reader,
     });
     await graph.resolve();
     const map = graph.getMapDocument();
     const keys = Array.from(map.keys());
-    assert(keys.length === 2);
+    assertEquals(keys.length, 3);
     map.forEach((model: ExiumGrapherModel) => {
       const { document } = model;
       const componentA = document.getComponentByName('A');
       const componentB = document.getComponentByName('B');
-      console.warn(componentA, componentB)
       if (model.url.pathname.endsWith('A.deeper')) assert(componentA);
-      if (model.url.pathname.endsWith('B.deeper')) assert(componentB);
+      if (model.url.pathname.endsWith('B.deeper')) {
+        console.warn(model);
+        assert(componentB);
+      }
     });
   } catch (err) {
     throw err;

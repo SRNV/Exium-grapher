@@ -1,17 +1,12 @@
-import { ExiumGrapherModel } from "./types/ExiumGrapherModel.ts";
+import { ExiumGrapherModel } from "./ExiumGrapherModel.ts";
 import { ExiumGrapherOptions } from "./types/ExiumGrapherOptions.ts";
+import reader from './reader.ts';
 
 export async function compute(opts: ExiumGrapherOptions): Promise<ExiumGrapherModel> {
-  const reader = async (fileURL: URL) => {
-    if (['http:', 'https:'].includes(fileURL.protocol)) {
-      return await (await (await fetch(fileURL)).blob()).text();
-    } else {
-      return Deno.readTextFileSync(fileURL)
-    }
-  };
+  if (['http:', 'https:'].includes(opts.url.protocol)) throw new Error(`The component at the root cannot be a remote component. input: ${opts.url.href}`)
   const model = new ExiumGrapherModel({
     url: opts.url,
-    reader,
+    reader: opts.reader,
     cwd: opts.cwd || Deno.cwd(),
     source: await reader(opts.url),
   });
