@@ -21,11 +21,10 @@ Deno.test('exium-grapher - resolve remote components', async () => {
       const { document } = model;
       const componentA = document.getComponentByName('A');
       const componentB = document.getComponentByName('B');
+      const componentC = document.getComponentByName('C');
       if (model.url.pathname.endsWith('A.deeper')) assert(componentA);
-      if (model.url.pathname.endsWith('B.deeper')) {
-        console.warn(model);
-        assert(componentB);
-      }
+      if (model.url.pathname.endsWith('B.deeper')) assert(componentB);
+      if (model.url.pathname.endsWith('C.deeper')) assert(componentC);
     });
   } catch (err) {
     throw err;

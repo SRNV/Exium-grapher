@@ -74,11 +74,12 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
     }
   }
   setBaseURL() {
+    if (!this.url.search) return;
     const urlsearch = new URLSearchParams(this.url.search);
     // save and remove the @ key
     this.baseURL = urlsearch.get('@');
     urlsearch.delete('@');
-    this.url.search = urlsearch.toString();
+    this.url.search = `/${urlsearch.toString().replace(/^\/+/, '')}`;
   }
   getURL(path: string): URL {
     // first set the baseURL if there's any search param
@@ -88,24 +89,27 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
     const isRelative = path.startsWith('.');
     const isScoped = path.startsWith('@/');
     const reg = /^\@\//i;
-    console.warn(this.baseURL);
-    let finalPath = isScoped ?
+    let finalPath = isRemote && isRelative && this.baseURL ?
+    `${this.url.origin}/${join(this.baseURL, path)}` :
       isRemote && this.baseURL ?
-        join(this.url.origin, this.baseURL, path.replace(reg, './')) :
-        path.replace(reg, `file:///${this.opts.cwd.replace(/\/+$/, '')}/`) :
-      isRemote && isRelative ?
-        join(this.url.origin, path) : path;
+        join(this.url.origin, this.baseURL, path.replace(reg, './')) : isScoped ?
+          path.replace(reg, `file:///${this.opts.cwd.replace(/\/+$/, '')}/`) :
+          path;
     return isRelative ?
       new URL(finalPath, this.opts.url)
       : new URL(finalPath);
   }
   async resolve() {
+    console.warn(1, this.baseURL, this.isRemote);
     const { document } = this;
     const { contexts } = document;
     const imports = contexts.filter((context: ExiumContext) => context.type === ContextTypes.ImportStatement && context.data.isComponent)
     for await (let importCTX of imports) {
       const dep = await this.require(importCTX);
-      if (dep) await dep.resolve();
+      if (dep) {
+        dep.baseURL = this.baseURL;
+        await dep.resolve();
+      }
     }
   }
   /**
