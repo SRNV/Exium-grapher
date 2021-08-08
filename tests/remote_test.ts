@@ -30,3 +30,19 @@ Deno.test('exium-grapher - resolve remote components', async () => {
     throw err;
   }
 });
+
+Deno.test('exium-grapher - resolve remote components with multiple sub relative imports', async () => {
+  try {
+    const url = new URL('./fixtures/remote_test/A2.deeper', import.meta.url);
+    const graph = await compute({
+      url,
+      reader,
+    });
+    await graph.resolve();
+    const map = graph.getMapDocument();
+    const keys = Array.from(map.keys());
+    assertEquals(keys.length, 5);
+  } catch (err) {
+    throw err;
+  }
+});
