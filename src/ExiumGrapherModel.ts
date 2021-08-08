@@ -129,6 +129,7 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
   async resolve() {
     const { document } = this;
     const { contexts } = document;
+    // TODO support for js/ts files
     const imports = contexts.filter((context: ExiumContext) => context.type === ContextTypes.ImportStatement && context.data.isComponent)
     for await (const importCTX of imports) {
       const dep = await this.require(importCTX);
