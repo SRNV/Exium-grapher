@@ -3,7 +3,7 @@ import {
   ExiumDocument,
   ContextTypes,
 } from '../deps/exium.ts';
-import { join } from '../deps/path.ts';
+import { join, normalize } from '../deps/path.ts';
 import { ExiumGrapherOptions } from "./types/ExiumGrapherOptions.ts";
 
 export interface ExiumGrapherModelInterface {
@@ -116,12 +116,13 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
     const isRelative = path.startsWith('.');
     const isScoped = path.startsWith('@/');
     const reg = /^\@\//i;
-    const finalPath = isRemote && isRelative && this.baseURL ?
+    let finalPath = isRemote && isRelative && this.baseURL ?
       `${this.url.origin}/${join(this.baseURL, path)}` :
       isRemote && this.baseURL ?
-        join(this.url.origin, this.baseURL, path.replace(reg, './')) : isScoped ?
-          path.replace(reg, `file:///${this.opts.cwd.replace(/\/+$/, '')}/`) :
-          path;
+        join(this.url.origin, this.baseURL, path.replace(reg, './')) :
+        isScoped ?
+          normalize(path.replace(reg, `file:///${this.opts.cwd.replace(/\/+$/, '')}/`)) :
+          normalize(path);
     return isRelative ?
       new URL(finalPath, this.opts.url)
       : new URL(finalPath);
