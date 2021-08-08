@@ -41,7 +41,12 @@ Deno.test('exium-grapher - resolve remote components with multiple sub relative 
     await graph.resolve();
     const map = graph.getMapDocument();
     const keys = Array.from(map.keys());
-    assertEquals(keys.length, 5);
+    assertEquals(keys.length, 7);
+    map.forEach((model: ExiumGrapherModel) => {
+      const { document } = model;
+      const components = document.getExportedComponents();
+      assertEquals(components.length, 1);
+    });
   } catch (err) {
     throw err;
   }

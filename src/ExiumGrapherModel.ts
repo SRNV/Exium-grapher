@@ -85,12 +85,14 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
     // first set the baseURL if there's any search param
     this.setBaseURL();
     // start to compute the url
+    const isHTTP = path.startsWith('http://') || path.startsWith('https://');
+    if (isHTTP) return new URL(path);
     const { isRemote } = this;
     const isRelative = path.startsWith('.');
     const isScoped = path.startsWith('@/');
     const reg = /^\@\//i;
     const finalPath = isRemote && isRelative && this.baseURL ?
-    `${this.url.origin}/${join(this.baseURL, path)}` :
+      `${this.url.origin}/${join(this.baseURL, path)}` :
       isRemote && this.baseURL ?
         join(this.url.origin, this.baseURL, path.replace(reg, './')) : isScoped ?
           path.replace(reg, `file:///${this.opts.cwd.replace(/\/+$/, '')}/`) :
