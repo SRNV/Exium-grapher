@@ -62,12 +62,12 @@ Deno.test('exium-grapher - resolve remote components with multiple sub relative 
 Deno.test('exium-grapher - throws if the request to a component results to a 404 not found', async () => {
   try {
     let isSuccess = false;
-    const url = new URL('./fixtures/remote_test/A2.deeper', import.meta.url);
+    const url = new URL('./fixtures/remote_test/A404.deeper', import.meta.url);
     const graph = await compute({
       url,
       reader,
-      onError(reason) {
-        isSuccess = reason === Reason.ComponentNotFound;
+      onError(opts) {
+        isSuccess = opts.reason === Reason.ComponentNotFound;
       },
     });
     await graph.resolve();
