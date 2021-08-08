@@ -15,16 +15,16 @@ export default async (fileURL: URL, onError: ExiumGrapherOptions['onError']) => 
     }
     return await (await result.blob()).text();
   } else {
-    console.warn(fileURL);
-    if (!existsSync(fileURL.pathname)) {
+    try {
+      return Deno.readTextFileSync(fileURL);
+    } catch(err) {
       onError({
         data: {
           url: fileURL,
         },
         reason: Reason.ComponentNotFound,
       });
-      throw new Error('[Exium-grapher] file not found.');
+      throw err;
     }
-    return Deno.readTextFileSync(fileURL)
   }
 };
