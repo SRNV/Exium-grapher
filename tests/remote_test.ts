@@ -5,6 +5,7 @@ import {
 } from "https://deno.land/std@0.95.0/testing/asserts.ts";
 import { ExiumGrapherModel } from "../src/ExiumGrapherModel.ts";
 import reader from '../src/reader.ts';
+import { Reason } from '../deps/exium.ts';
 
 Deno.test('exium-grapher - resolve remote components', async () => {
   try {
@@ -12,6 +13,9 @@ Deno.test('exium-grapher - resolve remote components', async () => {
     const graph = await compute({
       url,
       reader,
+      onError() {
+        throw new Error('test failed because of an error');
+      },
     });
     await graph.resolve();
     const map = graph.getMapDocument();
@@ -37,6 +41,9 @@ Deno.test('exium-grapher - resolve remote components with multiple sub relative 
     const graph = await compute({
       url,
       reader,
+      onError() {
+        throw new Error('test failed because of an error');
+      },
     });
     await graph.resolve();
     const map = graph.getMapDocument();
@@ -47,6 +54,24 @@ Deno.test('exium-grapher - resolve remote components with multiple sub relative 
       const components = document.getExportedComponents();
       assertEquals(components.length, 1);
     });
+  } catch (err) {
+    throw err;
+  }
+});
+
+Deno.test('exium-grapher - throws if the request to a component results to a 404 not found', async () => {
+  try {
+    let isSuccess = false;
+    const url = new URL('./fixtures/remote_test/A2.deeper', import.meta.url);
+    const graph = await compute({
+      url,
+      reader,
+      onError(reason) {
+        isSuccess = reason === Reason.ComponentNotFound;
+      },
+    });
+    await graph.resolve();
+    assert(isSuccess);
   } catch (err) {
     throw err;
   }

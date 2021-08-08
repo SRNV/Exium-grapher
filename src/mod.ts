@@ -8,7 +8,8 @@ export async function compute(opts: ExiumGrapherOptions): Promise<ExiumGrapherMo
     url: opts.url,
     reader: opts.reader,
     cwd: opts.cwd || Deno.cwd(),
-    source: await reader(opts.url),
+    source: await reader(opts.url, opts.onError),
+    onError: opts.onError,
     data: {
       isDeeper: opts.url.pathname.endsWith('.deeper'),
       isScript: false,

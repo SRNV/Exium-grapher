@@ -12,6 +12,9 @@ Deno.test('exium-grapher - graph resolution', async () => {
     const graph = await compute({
       url,
       reader,
+      onError() {
+        throw new Error('test failed because of an error');
+      },
     });
     await graph.resolve();
     const map = graph.getMapDocument();

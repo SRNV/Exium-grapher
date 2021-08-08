@@ -4,6 +4,7 @@ import {
   ContextTypes,
 } from '../deps/exium.ts';
 import { join } from '../deps/path.ts';
+import { ExiumGrapherOptions } from "./types/ExiumGrapherOptions.ts";
 
 export interface ExiumGrapherModelInterface {
   url: URL;
@@ -11,11 +12,12 @@ export interface ExiumGrapherModelInterface {
   fileDependencies: ExiumGrapherModel[];
 }
 export interface ExiumGrapherModelOptions {
-  reader: (url: URL) => Promise<string>,
+  reader: (url: URL, onError: ExiumGrapherOptions['onError']) => Promise<string>,
   url: URL,
   source: string,
   cwd: ReturnType<typeof Deno['cwd']>;
   parent?: ExiumGrapherModel;
+  onError: ExiumGrapherOptions['onError'];
   data: {
     isDeeper: boolean;
     isScript: boolean;
@@ -30,8 +32,10 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
   fileDependencies: ExiumGrapherModelInterface['fileDependencies'] = [];
   document: ExiumDocument;
   data: ExiumGrapherModelOptions['data'];
+  onError: ExiumGrapherOptions['onError'];
   constructor(private opts: ExiumGrapherModelOptions) {
     this.data = opts.data;
+    this.onError = opts.onError;
     this.document = new ExiumDocument({
       url: opts.url,
       onError() { },
@@ -69,7 +73,7 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
     const path = importCTX.getImportPath();
     if (path) {
       const newurl = this.getURL(path);
-      const source = await this.reader(newurl);
+      const source = await this.reader(newurl, this.onError);
       const { pathname } = newurl;
       const isScript = pathname.endsWith('.js') ||
         pathname.endsWith('.jsx') ||
@@ -82,6 +86,7 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
         reader: this.opts.reader,
         parent: this,
         source,
+        onError: this.onError,
         data: {
           isDeeper,
           isScript,

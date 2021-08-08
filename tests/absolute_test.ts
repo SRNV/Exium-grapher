@@ -13,6 +13,9 @@ Deno.test('exium-grapher - absolute path resolution', async () => {
       url,
       reader,
       cwd: cwd.pathname,
+      onError() {
+        throw new Error('test failed because of an error');
+      },
     });
     await graph.resolve();
     const map = graph.getMapDocument();

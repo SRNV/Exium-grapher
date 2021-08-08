@@ -1,0 +1,2 @@
+import component { B } from 'https://github.com/aaaa/component/somewhere';
+export app <A404 />
