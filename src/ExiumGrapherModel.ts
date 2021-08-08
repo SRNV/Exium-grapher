@@ -123,6 +123,7 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
         isScoped ?
           normalize(path.replace(reg, `file:///${this.opts.cwd.replace(/\/+$/, '')}/`)) :
           normalize(path);
+    console.warn(finalPath);
     return isRelative ?
       new URL(finalPath, this.opts.url)
       : new URL(finalPath);
