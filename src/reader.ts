@@ -1,4 +1,3 @@
-import { existsSync } from '../deps/fs.ts'
 import { ExiumGrapherOptions } from './types/ExiumGrapherOptions.ts';
 import { Reason } from '../deps/exium.ts';
 
