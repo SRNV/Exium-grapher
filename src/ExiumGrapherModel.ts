@@ -116,7 +116,7 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
     const isRelative = path.startsWith('.');
     const isScoped = path.startsWith('@/');
     const reg = /^\@\//i;
-    let finalPath = isRemote && isRelative && this.baseURL ?
+    const finalPath = isRemote && isRelative && this.baseURL ?
       `${this.url.origin}/${join(this.baseURL, path)}` :
       isRemote && this.baseURL ?
         join(this.url.origin, this.baseURL, path.replace(reg, './')) :
