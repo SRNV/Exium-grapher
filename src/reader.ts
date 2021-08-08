@@ -15,6 +15,7 @@ export default async (fileURL: URL, onError: ExiumGrapherOptions['onError']) => 
     }
     return await (await result.blob()).text();
   } else {
+    console.warn(fileURL);
     if (!existsSync(fileURL.pathname)) {
       onError({
         data: {
