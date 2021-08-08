@@ -16,6 +16,10 @@ export interface ExiumGrapherModelOptions {
   source: string,
   cwd: ReturnType<typeof Deno['cwd']>;
   parent?: ExiumGrapherModel;
+  data: {
+    isDeeper: boolean;
+    isScript: boolean;
+  }
 }
 export class ExiumGrapherModel implements ExiumGrapherModelInterface {
   /**
@@ -25,12 +29,18 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
   baseURL: null | string = null;
   fileDependencies: ExiumGrapherModelInterface['fileDependencies'] = [];
   document: ExiumDocument;
+  data: ExiumGrapherModelOptions['data'];
   constructor(private opts: ExiumGrapherModelOptions) {
+    this.data = opts.data;
     this.document = new ExiumDocument({
       url: opts.url,
       onError() { },
       source: opts.source,
-      options: { type: 'deeper' },
+      options: {
+        type: opts.data.isDeeper ?
+          'deeper' :
+          'custom'
+        },
     });
     ExiumGrapherModel.mapFiles.set(opts.url.href, this);
   }
@@ -60,12 +70,22 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
     if (path) {
       const newurl = this.getURL(path);
       const source = await this.reader(newurl);
+      const { pathname } = newurl;
+      const isScript = pathname.endsWith('.js') ||
+        pathname.endsWith('.jsx') ||
+        pathname.endsWith('.ts') ||
+        pathname.endsWith('.tsx');
+      const isDeeper = pathname.endsWith('.deeper');
       const dependency = new ExiumGrapherModel({
         url: newurl,
         cwd: this.opts.cwd,
         reader: this.opts.reader,
         parent: this,
         source,
+        data: {
+          isDeeper,
+          isScript,
+        }
       });
       this.fileDependencies.push(dependency);
       return dependency;

@@ -9,6 +9,10 @@ export async function compute(opts: ExiumGrapherOptions): Promise<ExiumGrapherMo
     reader: opts.reader,
     cwd: opts.cwd || Deno.cwd(),
     source: await reader(opts.url),
+    data: {
+      isDeeper: opts.url.pathname.endsWith('.deeper'),
+      isScript: false,
+    }
   });
   return model;
 }
