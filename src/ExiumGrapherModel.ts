@@ -43,8 +43,10 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
       options: {
         type: opts.data.isDeeper ?
           'deeper' :
-          'custom'
-        },
+          opts.data.isScript ?
+            'script' :
+            'custom',
+      },
     });
     ExiumGrapherModel.mapFiles.set(opts.url.href, this);
   }
@@ -131,7 +133,7 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
     const { document } = this;
     const { contexts } = document;
     // TODO support for js/ts files
-    const imports = contexts.filter((context: ExiumContext) => context.type === ContextTypes.ImportStatement && context.data.isComponent)
+    const imports = contexts.filter((context: ExiumContext) => context.type === ContextTypes.ImportStatement);
     for await (const importCTX of imports) {
       const dep = await this.require(importCTX);
       if (dep) {
