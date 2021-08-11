@@ -19,7 +19,7 @@ Deno.test('exium-grapher - can resolve module path', async () => {
     await graph.resolve();
     const map = graph.getMapDocument();
     const keys = Array.from(map.keys());
-    assert(keys.length === 3);
+    assertStrictEquals(keys.length, 4);
   } catch (err) {
     throw err;
   }

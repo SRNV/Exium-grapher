@@ -6,6 +6,7 @@ import {
 import { join, normalize } from '../deps/path.ts';
 import { ExiumGrapherOptions } from "./types/ExiumGrapherOptions.ts";
 
+const importContextTypes = [ContextTypes.ImportStatement, ContextTypes.ImportAmbient];
 export interface ExiumGrapherModelInterface {
   url: URL;
   document: ExiumDocument;
@@ -133,7 +134,7 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
     const { document } = this;
     const { contexts } = document;
     // TODO support for js/ts files
-    const imports = contexts.filter((context: ExiumContext) => context.type === ContextTypes.ImportStatement);
+    const imports = contexts.filter((context: ExiumContext) => importContextTypes.includes(context.type));
     for await (const importCTX of imports) {
       const dep = await this.require(importCTX);
       if (dep) {
