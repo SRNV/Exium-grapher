@@ -7,7 +7,7 @@ import reader from "../src/reader.ts";
 
 Deno.test('exium-grapher - absolute path resolution', async () => {
   try {
-    const url = new URL('./fixtures/absolute_test/A.deeper', import.meta.url);
+    const url = new URL('./fixtures/absolute_test/A.bio', import.meta.url);
     const cwd = new URL('./fixtures/absolute_test/', import.meta.url);
     const graph = await compute({
       url,
@@ -25,8 +25,8 @@ Deno.test('exium-grapher - absolute path resolution', async () => {
       const { document } = model;
       const componentA = document.getComponentByName('A');
       const componentB = document.getComponentByName('B');
-      if (model.url.pathname.endsWith('A.deeper')) assert(componentA);
-      if (model.url.pathname.endsWith('B.deeper')) assert(componentB);
+      if (model.url.pathname.endsWith('A.bio')) assert(componentA);
+      if (model.url.pathname.endsWith('B.bio')) assert(componentB);
     });
   } catch (err) {
     throw err;

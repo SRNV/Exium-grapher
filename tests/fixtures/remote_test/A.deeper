@@ -1,2 +1,0 @@
-import component { B } from 'https://raw.githubusercontent.com/SRNV/Exium-grapher/main/tests/fixtures/remote_test/B.deeper?@=SRNV/Exium-grapher/main/tests/fixtures/remote_test/';
-export app <A></A>

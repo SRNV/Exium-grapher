@@ -1,2 +1,2 @@
 # Exium-grapher
- modeling of dependencies between deeper components and deeper files
+ modeling of dependencies between bio components and bio files

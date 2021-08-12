@@ -20,7 +20,7 @@ export interface ExiumGrapherModelOptions {
   parent?: ExiumGrapherModel;
   onError: ExiumGrapherOptions['onError'];
   data: {
-    isDeeper: boolean;
+    isBio: boolean;
     isScript: boolean;
   }
 }
@@ -42,8 +42,8 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
       onError() { },
       source: opts.source,
       options: {
-        type: opts.data.isDeeper ?
-          'deeper' :
+        type: opts.data.isBio ?
+          'bio' :
           opts.data.isScript ?
             'script' :
             'custom',
@@ -82,7 +82,7 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
         pathname.endsWith('.jsx') ||
         pathname.endsWith('.ts') ||
         pathname.endsWith('.tsx');
-      const isDeeper = pathname.endsWith('.deeper');
+      const isBio = pathname.endsWith('.bio');
       const dependency = new ExiumGrapherModel({
         url: newurl,
         cwd: this.opts.cwd,
@@ -91,7 +91,7 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
         source,
         onError: this.onError,
         data: {
-          isDeeper,
+          isBio,
           isScript,
         }
       });

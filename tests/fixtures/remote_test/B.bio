@@ -1,0 +1,2 @@
+import component { C } from './C.bio';
+export component <B></B>

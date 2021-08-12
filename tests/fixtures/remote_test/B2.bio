@@ -1,0 +1,4 @@
+import component { A } from './A.bio';
+import component { B } from './B.bio';
+import component { C } from './C.bio';
+export component <B></B>

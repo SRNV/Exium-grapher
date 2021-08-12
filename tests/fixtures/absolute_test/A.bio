@@ -1,0 +1,2 @@
+import component { B } from '@/B.bio';
+export app <A></A>

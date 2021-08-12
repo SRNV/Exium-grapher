@@ -11,7 +11,7 @@ export async function compute(opts: ExiumGrapherOptions): Promise<ExiumGrapherMo
     source: await reader(opts.url, opts.onError),
     onError: opts.onError,
     data: {
-      isDeeper: opts.url.pathname.endsWith('.deeper'),
+      isBio: opts.url.pathname.endsWith('.bio'),
       isScript: false,
     }
   });

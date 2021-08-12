@@ -9,7 +9,7 @@ import { Reason } from '../deps/exium.ts';
 
 Deno.test('exium-grapher - resolve remote components', async () => {
   try {
-    const url = new URL('./fixtures/remote_test/A.deeper', import.meta.url);
+    const url = new URL('./fixtures/remote_test/A.bio', import.meta.url);
     const graph = await compute({
       url,
       reader,
@@ -26,9 +26,9 @@ Deno.test('exium-grapher - resolve remote components', async () => {
       const componentA = document.getComponentByName('A');
       const componentB = document.getComponentByName('B');
       const componentC = document.getComponentByName('C');
-      if (model.url.pathname.endsWith('A.deeper')) assert(componentA);
-      if (model.url.pathname.endsWith('B.deeper')) assert(componentB);
-      if (model.url.pathname.endsWith('C.deeper')) assert(componentC);
+      if (model.url.pathname.endsWith('A.bio')) assert(componentA);
+      if (model.url.pathname.endsWith('B.bio')) assert(componentB);
+      if (model.url.pathname.endsWith('C.bio')) assert(componentC);
     });
   } catch (err) {
     throw err;
@@ -37,7 +37,7 @@ Deno.test('exium-grapher - resolve remote components', async () => {
 
 Deno.test('exium-grapher - resolve remote components with multiple sub relative imports', async () => {
   try {
-    const url = new URL('./fixtures/remote_test/A2.deeper', import.meta.url);
+    const url = new URL('./fixtures/remote_test/A2.bio', import.meta.url);
     const graph = await compute({
       url,
       reader,
@@ -62,7 +62,7 @@ Deno.test('exium-grapher - resolve remote components with multiple sub relative 
 Deno.test('exium-grapher - throws if the request to a component results to a 404 not found', async () => {
   try {
     let isSuccess = false;
-    const url = new URL('./fixtures/remote_test/A404.deeper', import.meta.url);
+    const url = new URL('./fixtures/remote_test/A404.bio', import.meta.url);
     const graph = await compute({
       url,
       reader,

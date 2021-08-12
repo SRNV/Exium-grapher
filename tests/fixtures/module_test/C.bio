@@ -1,5 +1,5 @@
 import some from './A.ts';
 
 export component <C>
-  ${some()}
+  ${some}
 </C>

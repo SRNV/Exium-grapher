@@ -1,4 +1,4 @@
-import component { Child } from './Child.deeper';
+import component { Child } from './Child.bio';
 
 export app <Application>
   <template>

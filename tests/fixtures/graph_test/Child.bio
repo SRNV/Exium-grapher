@@ -1,4 +1,4 @@
-import component { SubChild } from './SubChild.deeper';
+import component { SubChild } from './SubChild.bio';
 
 export component <Child>
   <template>

@@ -1,4 +1,0 @@
-import component { A } from './A.deeper';
-import component { B } from './B.deeper';
-import component { C } from './C.deeper';
-export component <B></B>

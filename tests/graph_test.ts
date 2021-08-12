@@ -8,7 +8,7 @@ import reader from '../src/reader.ts';
 
 Deno.test('exium-grapher - graph resolution', async () => {
   try {
-    const url = new URL('./fixtures/graph_test/Hello.deeper', import.meta.url);
+    const url = new URL('./fixtures/graph_test/Hello.bio', import.meta.url);
     const graph = await compute({
       url,
       reader,
