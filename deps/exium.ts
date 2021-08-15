@@ -3,4 +3,4 @@ export {
   ExiumDocument,
   ContextTypes,
   Reason
-} from 'https://deno.land/x/exium@0.18.0/mod.ts';
+} from 'https://deno.land/x/exium@0.19.0/mod.ts';
