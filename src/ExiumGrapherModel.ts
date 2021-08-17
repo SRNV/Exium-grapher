@@ -150,4 +150,21 @@ export class ExiumGrapherModel implements ExiumGrapherModelInterface {
   getMapDocument(): typeof ExiumGrapherModel['mapFiles'] {
     return ExiumGrapherModel.mapFiles;
   }
+  /**
+   * compare two graph
+   * @returns true if nothing has changed
+   */
+  isEqual(other: ExiumGrapherModel): boolean {
+    const deps = this.fileDependencies;
+    // other
+    const depsOther = other.fileDependencies;
+    let result = this.url.href === other.url.href
+      && this.document.getText() === other.document.getText();
+    deps.forEach((dep, id) => {
+      if (result) {
+        result = dep.isEqual(depsOther[id]);
+      }
+    });
+    return result;
+  }
 }
